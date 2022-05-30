@@ -71,7 +71,7 @@ async function registerBroadcaster(token: string, broadcasterId: string) {
 				},
 				transport: {
 					method: 'webhook',
-					callback: `${process.env.BASE_URL}/callback`,
+					callback: `${process.env.BASE_URL}/api/callback`,
 					secret: process.env.REQUEST_SECRET
 				}
 			})
