@@ -34,6 +34,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		}
 
 		const { type } = req.body.subscription;
+		console.log(req.body);
 		const broadcasterId = req.body.subscription.condition.broadcaster_user_id;
 		if (type !== 'stream.online') {
 			Logger.error(null, `Notifications - 400 - Not stream.online, instead ${type}`);
@@ -86,7 +87,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const { title } = json.data[0];
 
-		sendMessageToDiscordWebhook(title, broadcasterId);
+		console.log(0, json.data);
+
+		sendMessageToDiscordWebhook(broadcasterId, title);
 
 		Logger.info('Notifications - 204 - Success');
 
@@ -129,7 +132,7 @@ async function sendMessageToDiscordWebhook(broadcasterId: string, title: string)
 
 	if (!broadcasterDocument) return;
 
-	if (broadcasterDocument.isSpacedriveBroadcaster && !title.toLowerCase().includes('spacedrive')) {
+	if (broadcasterDocument.isSpacedriveBroadcaster && !title?.toLowerCase().includes('spacedrive')) {
 		return Logger.info(
 			`${broadcasterDocument.broadcasterUsername} does not have "spacedrive" in their title.`
 		);
