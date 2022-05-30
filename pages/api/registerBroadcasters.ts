@@ -2,7 +2,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import Logger from '../../lib/classes/Logger';
 import mongo from '../../utils/mongo';
 
-export default async (_: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+	if (req.headers['secret'] !== process.env.REQUEST_SECRET) {
+		Logger.error(null, 'Register Broadcasters - 403 - Invalid Secret');
+		return res.status(403).end();
+	}
+
 	const { access_token: accessToken, expires_in: expiresIn } = await (
 		await fetch(
 			`https://id.twitch.tv/oauth2/token?client_id=${process.env.CLIENT_ID}&client_secret=${
