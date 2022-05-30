@@ -127,8 +127,6 @@ async function sendMessageToDiscordWebhook(broadcasterId: string, title: string)
 		.collection('broadcasters')
 		.findOne({ broadcasterId });
 
-	console.log(broadcasterId, title, broadcasterDocument);
-
 	if (!broadcasterDocument) return;
 
 	if (broadcasterDocument.isSpacedriveBroadcaster && !title?.toLowerCase().includes('spacedrive')) {
@@ -151,14 +149,11 @@ async function sendMessageToDiscordWebhook(broadcasterId: string, title: string)
 		`Sending webhook message with content of ${message.content} into ${broadcasterDocument?.webhookURL}`
 	);
 
-	const a = await fetch(broadcasterDocument.webhookURL, {
+	return fetch(broadcasterDocument.webhookURL, {
 		method: 'POST',
 		body: JSON.stringify(message),
 		headers: { 'Content-Type': 'application/json' }
 	});
-
-	console.log(a, await a.text());
-	return a;
 }
 
 /**
