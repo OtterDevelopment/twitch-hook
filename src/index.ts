@@ -148,7 +148,7 @@ app.post('/callback', async (request, response) => {
 
 // NOTE: Before subscribing to events, you must create a callback that listens for events. Your callback must use SSL and listen on port 443.
 // > https://dev.twitch.tv/docs/eventsub/handling-webhook-events
-app.listen(443);
+app.listen(8005);
 
 /**
  * Send a message to a Discord webhook.
