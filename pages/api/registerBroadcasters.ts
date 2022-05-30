@@ -17,6 +17,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		)
 	).json();
 
+	await mongo.connect();
 	await mongo
 		.db('data')
 		.collection('other')

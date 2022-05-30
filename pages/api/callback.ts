@@ -129,9 +129,7 @@ async function sendMessageToDiscordWebhook(broadcasterId: string, title: string)
 
 	if (!broadcasterDocument) return;
 
-	const isSpacedriveBroadcaster = broadcasterDocument.isSpacedriveBroadcaster;
-
-	if (isSpacedriveBroadcaster && !title.toLowerCase().includes('spacedrive')) {
+	if (broadcasterDocument.isSpacedriveBroadcaster && !title.toLowerCase().includes('spacedrive')) {
 		return Logger.info(
 			`${broadcasterDocument.broadcasterUsername} does not have "spacedrive" in their title.`
 		);
