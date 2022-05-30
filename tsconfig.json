@@ -1,33 +1,20 @@
 {
 	"compilerOptions": {
-	  "target": "ESNext",
-	  "module": "ESNext",
-	  "moduleResolution": "node",
-	  "lib": ["ESNext"],
-  
-	  "rootDir": ".",
-	  "outDir": "dist",
-  
-	  "strict": true,
-	  "alwaysStrict": true,
-	  "strictFunctionTypes": true,
-	  "strictNullChecks": true,
-	  "strictPropertyInitialization": true,
-  
-	  "forceConsistentCasingInFileNames": true,
-	  "noImplicitAny": true,
-	  "noImplicitThis": true,
-	  "noFallthroughCasesInSwitch": true,
-	  "noUnusedLocals": true,
-	  "noUnusedParameters": true,
-	  "noImplicitOverride": true,
-	  "allowSyntheticDefaultImports": true,
-  
-	  "skipLibCheck": true,
-  
-	  "pretty": true,
-  
-	  "typeRoots": ["node_modules/@types", "typings/"]
+		"target": "es5",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"module": "esnext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"incremental": true
 	},
-	"main": "src/index.ts"
-  }
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "k.mts"],
+	"exclude": ["node_modules"]
+}
