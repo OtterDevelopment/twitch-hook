@@ -3,6 +3,7 @@ import petitio from 'petitio';
 import { createHmac } from 'crypto';
 import { load } from 'dotenv-extended';
 import { RESTPostAPIWebhookWithTokenJSONBody } from 'discord-api-types/v10';
+import Logger from '../lib/classes/Logger.js';
 
 load({ path: '.env' });
 
@@ -39,9 +40,9 @@ const localCache = {
 	return Promise.all(
 		broadcasterIds.map((broadcasterId) =>
 			registerBroadcaster(accessToken, broadcasterId).then((response) =>
-				console.log(
+				Logger.info(
 					`Registered ${broadcasterId} - Status Code ${response.statusCode}`,
-					JSON.stringify(response.json())
+					response.statusCode === 200 ? '' : response.json()
 				)
 			)
 		)
@@ -52,16 +53,17 @@ const localCache = {
  * Handle callbacks for our EventSub system.
  */
 app.post('/callback', async (request, response) => {
-	console.log(
-		'/callback got a request with the type',
-		request.header('twitch-eventsub-message-type')
+	Logger.info(
+		`Received a request on /callback. Notifications: ${
+			request.header('twitch-eventsub-message-type') === 'notification'
+		}`
 	);
 	if (request.header('twitch-eventsub-message-type') === 'notification') {
 		if (
 			!request.header('Twitch-Eventsub-Message-Id') ||
 			!request.header('Twitch-Eventsub-Message-Timestamp')
 		) {
-			console.log('403 - Missing headers');
+			Logger.error(null, 'Notifications - 403 - Missing Headers.');
 			return response.status(403).end();
 		}
 
@@ -75,14 +77,14 @@ app.post('/callback', async (request, response) => {
 		const actualSig = request.header('Twitch-Eventsub-Message-Signature');
 
 		if (expectedSig !== actualSig) {
-			console.log('204 - Invalid signature');
-			return response.status(204).end();
+			Logger.error(null, 'Notifications - 403 - Invalid Signature');
+			return response.status(403).end();
 		}
 
 		const { type } = request.body.subscription;
 		const broadcasterId = request.body.subscription.condition.broadcaster_user_id;
 		if (type !== 'stream.online') {
-			console.log(`204 - not stream.online, instead ${type}`);
+			Logger.error(null, `Notifications - 400 - Not stream.online, instead ${type}`);
 			return response.status(204).end();
 		}
 
@@ -107,10 +109,10 @@ app.post('/callback', async (request, response) => {
 		}
 
 		if (statusCode !== 200) {
-			console.log(`500 - Invalid access code`);
+			Logger.error(null, 'Notifications - 500 - Invalid access code.');
 			return response.status(500).end();
 		} else if (!json.data.length || !json.data[0]?.broadcaster_name) {
-			console.log(`400 - Invalid stream data`);
+			Logger.error(null, 'Notifications - 400 - Invalid stream data.');
 			return response.status(400).end();
 		}
 
@@ -118,7 +120,7 @@ app.post('/callback', async (request, response) => {
 
 		sendMessageToDiscordWebhook(title, displayName, broadcasterId);
 
-		console.log(`204 - success`);
+		Logger.info('Notifications - 204 - Success');
 
 		return response.status(204).type('text/plain').end();
 	}
@@ -132,9 +134,14 @@ app.post('/callback', async (request, response) => {
 		.digest('hex')}`;
 	const actualSig = request.header('Twitch-Eventsub-Message-Signature');
 
-	if (expectedSig !== actualSig) return response.status(403).end();
+	if (expectedSig !== actualSig) {
+		Logger.error(null, `403 - Invalid Signature`);
+		return response.status(403).end();
+	}
 
 	const { challenge } = request.body;
+
+	Logger.info(`Challenge - 204 - Success`);
 
 	return response.status(200).type('text/plain').send(challenge).end();
 });
@@ -154,7 +161,7 @@ function sendMessageToDiscordWebhook(title: string, username: string, broadcaste
 		localCache.spacedriveBroadCasters.includes(broadcasterId) &&
 		!title?.toLowerCase().includes('spacedrive')
 	) {
-		console.log('"spacedrive" not in title');
+		Logger.info(`${username} does not have "spacedrive" in their title.`);
 		return;
 	}
 
@@ -164,9 +171,9 @@ function sendMessageToDiscordWebhook(title: string, username: string, broadcaste
 		}`
 	};
 
-	console.log(
-		`sending webhook message ${message.content} into ${
-			localCache.spacedriveBroadCasters.includes(broadcasterId) ? 'Spacedrive' : 'Polars Cafe'
+	Logger.info(
+		`Sending webhook message with content of ${message.content} into ${
+			localCache.spacedriveBroadCasters.includes(broadcasterId) ? 'Spacedrive' : "Polar's Cafe"
 		}`
 	);
 
@@ -192,8 +199,6 @@ function getStreamData(token: string, broadcasterId: string) {
 		.header('Client-ID', process.env.CLIENT_ID)
 		.send();
 }
-
-/**
 
 /**
  * Register to receive events from Twitch.
