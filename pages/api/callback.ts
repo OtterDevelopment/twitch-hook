@@ -34,7 +34,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		}
 
 		const { type } = req.body.subscription;
-		console.log(req.body);
 		const broadcasterId = req.body.subscription.condition.broadcaster_user_id;
 		if (type !== 'stream.online') {
 			Logger.error(null, `Notifications - 400 - Not stream.online, instead ${type}`);
@@ -86,8 +85,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		}
 
 		const { title } = json.data[0];
-
-		console.log(0, json.data);
 
 		sendMessageToDiscordWebhook(broadcasterId, title);
 
@@ -152,11 +149,14 @@ async function sendMessageToDiscordWebhook(broadcasterId: string, title: string)
 		`Sending webhook message with content of ${message.content} into ${broadcasterDocument?.webhookURL}`
 	);
 
-	return fetch(broadcasterDocument.webhookURL, {
+	const a = await fetch(broadcasterDocument.webhookURL, {
 		method: 'POST',
 		body: JSON.stringify(message),
 		headers: { 'Content-Type': 'application/json' }
 	});
+
+	console.log(a, await a.text());
+	return a;
 }
 
 /**
