@@ -4,8 +4,14 @@
 	"main": "dist/src/index.js",
 	"type": "module",
 	"scripts": {
-		"build": "tsc && node .",
-		"run": "node ."
+		"quickstart": "pnpm i && pnpm run dev",
+		"build": "next build",
+		"start": "next start",
+		"dev": "next dev -p 5555",
+		"dev:debug": "NODE_OPTIONS='--inspect' next dev",
+		"lint": "next lint --fix",
+		"tsc": "tsc --noEmit",
+		"format": "prettier --write ./{server,pages,utils,components}/**/*.{js,jsx,json,md,ts,tsx}"
 	},
 	"dependencies": {
 		"colorette": "^2.0.16",
