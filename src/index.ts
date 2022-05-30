@@ -42,7 +42,7 @@ const localCache = {
 			registerBroadcaster(accessToken, broadcasterId).then((response) =>
 				Logger.info(
 					`Registered ${broadcasterId} - Status Code ${response.statusCode}`,
-					response.statusCode === 200 ? '' : response.json()
+					response.statusCode === 202 ? '' : response.json()
 				)
 			)
 		)
