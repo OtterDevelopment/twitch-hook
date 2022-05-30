@@ -32,10 +32,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	const responses = await Promise.all(
 		broadcastersDocument.map((broadcasterDocument) =>
 			registerBroadcaster(accessToken, broadcasterDocument.broadcasterId).then((response) => {
-				Logger.info(
-					`Registered ${broadcasterDocument.broadcasterId} - Status Code ${response.status}`,
-					response.status === 202 ? '' : response.json()
-				);
+				response
+					.json()
+					.then((json) =>
+						Logger.info(
+							`Registered ${broadcasterDocument.broadcasterId} - Status Code ${response.status}`,
+							response.status === 202 ? '' : json
+						)
+					);
 			})
 		)
 	);
@@ -57,7 +61,7 @@ async function registerBroadcaster(token: string, broadcasterId: string) {
 			headers: {
 				'Authorization': `Bearer ${token}`,
 				'Client-ID': process.env.CLIENT_ID,
-				'Content-Type': process.env.CLIENT_ID
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
 				type: 'stream.online',

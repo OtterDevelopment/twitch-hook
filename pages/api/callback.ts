@@ -22,11 +22,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const expectedSig = `sha256=${createHmac('sha256', process.env.REQUEST_SECRET)
 			.update(
-				(((req.headers['Twitch-Eventsub-Message-Id'] as string) +
-					req.headers['Twitch-Eventsub-Message-Timestamp']) as string) + JSON.stringify(req.body)
+				(((req.headers['twitch-eventsub-message-id'] as string) +
+					req.headers['twitch-eventsub-message-timestamp']) as string) + JSON.stringify(req.body)
 			)
 			.digest('hex')}`;
-		const actualSig = req.headers['Twitch-Eventsub-Message-Signature'];
+		const actualSig = req.headers['twitch-eventsub-message-signature'];
 
 		if (expectedSig !== actualSig) {
 			Logger.error(null, 'Notifications - 403 - Invalid Signature');
@@ -95,11 +95,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 	const expectedSig = `sha256=${createHmac('sha256', process.env.REQUEST_SECRET)
 		.update(
-			(((req.headers['Twitch-Eventsub-Message-Id'] as string) +
-				req.headers['Twitch-Eventsub-Message-Timestamp']) as string) + JSON.stringify(req.body)
+			(((req.headers['twitch-eventsub-message-id'] as string) +
+				req.headers['twitch-eventsub-message-timestamp']) as string) + JSON.stringify(req.body)
 		)
 		.digest('hex')}`;
-	const actualSig = req.headers['Twitch-Eventsub-Message-Signature'];
+	const actualSig = req.headers['twitch-eventsub-message-signature'];
 
 	if (expectedSig !== actualSig) {
 		Logger.error(null, 'Challenge - 403 - Invalid Signature');
