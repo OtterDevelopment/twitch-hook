@@ -127,6 +127,8 @@ async function sendMessageToDiscordWebhook(broadcasterId: string, title: string)
 		.collection('broadcasters')
 		.findOne({ broadcasterId });
 
+	console.log(broadcasterId, title, broadcasterDocument);
+
 	if (!broadcasterDocument) return;
 
 	if (broadcasterDocument.isSpacedriveBroadcaster && !title?.toLowerCase().includes('spacedrive')) {
