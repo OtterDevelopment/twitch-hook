@@ -86,7 +86,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const { title } = json.data[0];
 
-		sendMessageToDiscordWebhook(broadcasterId, title);
+		await sendMessageToDiscordWebhook(broadcasterId, title);
 
 		Logger.info('Notifications - 204 - Success');
 
